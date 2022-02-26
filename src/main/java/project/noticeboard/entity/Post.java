@@ -28,7 +28,7 @@ public class Post extends BaseEntity {
     @LastModifiedDate
     private LocalDateTime modifiedAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 

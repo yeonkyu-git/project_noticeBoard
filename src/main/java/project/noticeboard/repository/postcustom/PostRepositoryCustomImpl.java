@@ -19,19 +19,23 @@ import static org.springframework.util.StringUtils.hasText;
 import static project.noticeboard.entity.QMember.member;
 import static project.noticeboard.entity.QPost.post;
 
-@Repository
-@RequiredArgsConstructor
 @Slf4j
-public class PostRepositoryImpl implements PostRepositoryCustom{
+public class PostRepositoryCustomImpl implements PostRepositoryCustom{
 
     private final EntityManager em;
     private final JPAQueryFactory queryFactory;
+
+
+    public PostRepositoryCustomImpl(EntityManager em) {
+        this.em = em;
+        queryFactory = new JPAQueryFactory(em);
+    }
 
     @Override
     public List<Post> findPostSearch(PostSearch search) {
         return queryFactory
                 .selectFrom(post)
-                .leftJoin(member)
+                .leftJoin(post.member, member).fetchJoin()
                 .where(
                         titleContain(search.getTitle()),
                         contentContain(search.getContent()),

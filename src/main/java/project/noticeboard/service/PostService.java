@@ -27,25 +27,28 @@ public class PostService {
     /**
      * 게시글 등록
      */
-    public void createPost(String title, String content, Long memberId) {
+    public Long createPost(String title, String content, Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
         Post post = Post.createPost(title, content, member);
         postRepository.save(post);
+        return post.getId();
     }
 
     /**
      * 게시글 수정
      */
-    public void updatePost(Long postId, String title, String content) {
-        Post post = postRepository.findById(postId).orElseThrow(RuntimeException::new);
+    public void updatePost(Long postId, Long memberId, String title, String content) {
+        Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+        Post post = postRepository.findByIdAndMember(postId, member).orElseThrow(RuntimeException::new);
         post.updatePost(title, content);
     }
 
     /**
      * 게시글 삭제
      */
-    public void deletePost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(RuntimeException::new);
+    public void deletePost(Long postId, Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+        Post post = postRepository.findByIdAndMember(postId, member).orElseThrow(RuntimeException::new);
 
         // post에 등록되어 있는 모든 댓글들도 같이 삭제되게끔 한다.
         // postId에 해당하는 댓글 가져오기
@@ -56,7 +59,7 @@ public class PostService {
     }
 
     /**
-     * 게시글 조회
+     * 게시글 조회  ->  Spring Data JPA Paging
      */
     public List<PostDto> findAllPost(int page, int size) {
 
@@ -75,7 +78,7 @@ public class PostService {
     }
 
     /**
-     * 게시글 검색 ( 조건 : 제목, 내용, 작성자 )
+     * 게시글 검색 ( 조건 : 제목, 내용, 작성자 )  -> Querydsl
      */
     public List<PostDto> findBySearch(PostSearch search) {
         List<Post> postSearch = postRepository.findPostSearch(search);

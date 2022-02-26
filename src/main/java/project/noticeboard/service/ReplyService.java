@@ -2,6 +2,9 @@ package project.noticeboard.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import project.noticeboard.dto.ReplyDto;
 import project.noticeboard.entity.Member;
@@ -27,12 +30,13 @@ public class ReplyService {
     /**
      * 댓글 등록
      */
-    public void createReply(String content, Long memberId, Long postId) {
+    public Long createReply(String content, Long memberId, Long postId) {
         Optional<Member> member = memberRepository.findById(memberId);
         Optional<Post> post = postRepository.findById(postId);
 
         if (member.isPresent() && post.isPresent()) {
-            replyRepository.save(Reply.createReply(content, member.get(), post.get()));
+            Reply saveReply = replyRepository.save(Reply.createReply(content, member.get(), post.get()));
+            return saveReply.getId();
         } else {
             throw new RuntimeException("댓글 등록에 실패하였습니다");
         }
@@ -57,9 +61,11 @@ public class ReplyService {
     /**
      * 댓글 조회
      */
-    public List<ReplyDto> findByPostId(Long postId) {
+    public List<ReplyDto> findByPostId(Long postId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Post post = postRepository.findById(postId).orElseThrow(RuntimeException::new);
-        List<Reply> replies = replyRepository.findByPost(post);
+        Page<Reply> pageReply = replyRepository.findReplyWithPostAndMember(post, pageRequest);
+        List<Reply> replies = pageReply.getContent();
         return replies.stream()
                 .map(r -> new ReplyDto(
                         r.getId(),
