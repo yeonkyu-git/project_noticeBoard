@@ -3,6 +3,7 @@ package project.noticeboard.entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,6 +18,8 @@ public class Reply extends BaseEntity {
     @Column(name = "reply_id")
     private Long id;
     private String content;
+
+    @LastModifiedDate
     private LocalDateTime modifiedAt;
 
     @ManyToOne

@@ -3,6 +3,7 @@ package project.noticeboard.entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.sql.Blob;
@@ -22,6 +23,8 @@ public class Post extends BaseEntity {
 
     private String title;
     private Blob content;
+
+    @LastModifiedDate
     private LocalDateTime modifiedAt;
 
     @ManyToOne

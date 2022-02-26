@@ -25,6 +25,10 @@ public class Member extends BaseEntity {
     private int age;
     private LocalDateTime lastLoginAt;
 
+    @OneToMany(mappedBy = "member")
+    List<Post> posts = new ArrayList<>();
+
+    //== 생성 메소드 ==//
     public Member(String email, String password, String username, int age) {
         this.email = email;
         this.password = password;
@@ -32,6 +36,9 @@ public class Member extends BaseEntity {
         this.age = age;
     }
 
-    @OneToMany(mappedBy = "member")
-    List<Post> posts = new ArrayList<>();
+    //== 비즈니스 메소드 ==//
+    public void updateLastLoginDate() {
+        this.lastLoginAt = LocalDateTime.now();
+    }
+
 }
