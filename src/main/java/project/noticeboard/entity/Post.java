@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.sql.Blob;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class Post extends BaseEntity {
     private Long id;
 
     private String title;
-    private Blob content;
+    private String content;
 
     @LastModifiedDate
     private LocalDateTime modifiedAt;
@@ -35,7 +36,7 @@ public class Post extends BaseEntity {
     List<Reply> replies = new ArrayList<>();
 
     // 생성자 메소드
-    public Post(String title, Blob content) {
+    public Post(String title, String content) {
         this.title = title;
         this.content = content;
     }
@@ -47,9 +48,14 @@ public class Post extends BaseEntity {
     }
 
     //== 비즈니스 로직 ==//
-    public static Post createPost(String title, Blob content, Member member) {
+    public static Post createPost(String title, String content, Member member) {
         Post post = new Post(title, content);
         post.setMember(member);
         return post;
+    }
+
+    public void updatePost(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 }

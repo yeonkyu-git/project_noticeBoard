@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,16 +18,16 @@ public class Reply extends BaseEntity {
     @GeneratedValue
     @Column(name = "reply_id")
     private Long id;
-    private String content;
 
+    private String content;
     @LastModifiedDate
     private LocalDateTime modifiedAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
@@ -47,5 +48,9 @@ public class Reply extends BaseEntity {
         Reply reply = new Reply(content, member);
         reply.setPost(post);
         return reply;
+    }
+
+    public void updateReply(String content) {
+        this.content = content;
     }
 }
