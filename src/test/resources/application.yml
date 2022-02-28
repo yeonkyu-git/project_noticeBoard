@@ -2,11 +2,11 @@ spring:
   profiles:
     active: local
 
-  datasource:
-    url: jdbc:h2:tcp://localhost/~/noticeboard
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+#  datasource:
+#    url: jdbc:h2:tcp://localhost/~/noticeboard
+#    username: sa
+#    password:
+#    driver-class-name: org.h2.Driver
 
   jpa:
     hibernate:
@@ -17,8 +17,6 @@ spring:
         #        show_sql: true
         format_sql: true
 #        use_sql_comments: true
-  messages:
-      basename: errors
 
 logging.level:
   p6spy: info

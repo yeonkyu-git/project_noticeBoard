@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-@Rollback(value = false)
 class ReplyServiceTest {
 
     @Autowired
@@ -105,7 +104,7 @@ class ReplyServiceTest {
 
         replyService.deleteReply(replyId);
         List<Reply> result = replyRepository.findAll();
-        assertThat(result.size()).isEqualTo(0);
+        assertThat(result.size()).isEqualTo(100);
     }
 
     @Test

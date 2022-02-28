@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/bootstrap/bootstrap.min.css" />
+    <script
+      src="https://kit.fontawesome.com/4cc3138973.js"
+      crossorigin="anonymous"
+    ></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">Project Board</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse justify-content-between"
+          id="navbarSupportedContent"
+        >
+          <ul class="navbar-nav mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a href="/" class="nav-link active" aria-current="page"> 홈 </a>
+            </li>
+            <li class="nav-item">
+              <a href="/board" class="nav-link active" aria-current="page">
+                게시판
+              </a>
+            </li>
+          </ul>
+
+          <div class="buttons">
+            <a href="/login" class="btn btn-outline-dark">
+              <i class="fa fa-sign-in me-1"></i>
+              Login
+            </a>
+            <a href="/register" class="btn btn-outline-dark ms-2">
+              <i class="fa fa-user-plus me-1"></i>
+              Register
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 게시판 -->
+    <div class="container-sm my-5 py-5">
+      <div class="row">
+        <div class="col-12 mb-5">
+          <h1 class="display-6 fw-bolder text-center">게시판</h1>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <!-- 상위 헤더 -->
+        <div class="d-flex justify-content-center border bg-light">
+          <div class="col-2">
+            <div class="p-3">번호</div>
+          </div>
+          <div class="col-6">
+            <div class="p-3">제목</div>
+          </div>
+          <div class="col-2">
+            <div class="p-3">등록자</div>
+          </div>
+          <div class="col-2">
+            <div class="p-3">등록일</div>
+          </div>
+        </div>
+        <!-- 내용 -->
+        <a href="" class="text-decoration-none text-black border">
+          <div class="d-flex justify-content-center">
+            <div class="col-2">
+              <div class="p-3">1</div>
+            </div>
+            <div class="col-6">
+              <div class="p-3">첫 게시글</div>
+            </div>
+            <div class="col-2">
+              <div class="p-3">김연규</div>
+            </div>
+            <div class="col-2">
+              <div class="p-3">2022-02-27</div>
+            </div>
+          </div>
+        </a>
+        <a href="" class="text-decoration-none text-black border bg-light">
+          <div class="d-flex justify-content-center">
+            <div class="col-2">
+              <div class="p-3">2</div>
+            </div>
+            <div class="col-6">
+              <div class="p-3">두번째 게시글</div>
+            </div>
+            <div class="col-2">
+              <div class="p-3">김연규</div>
+            </div>
+            <div class="col-2">
+              <div class="p-3">2022-02-27</div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </body>
+</html>

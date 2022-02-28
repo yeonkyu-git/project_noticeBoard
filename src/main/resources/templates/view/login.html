@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="fragments/header :: header">
+    <title>Login Page</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+  <div th:replace="fragments/bodyHeader :: bodyHeader" />
+    <!-- Login -->
+    <div class="container-sm my-5 py-5">
+      <form class="w-50 mx-auto" th:action="@{/}" th:object="${memberForm}" method="post">
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label">이메일</label>
+          <input
+            type="text"
+            class="form-control"
+            id="exampleInputEmail1"
+            aria-describedby="emailHelp"
+            th:field="*{email}"
+            th:errorclass="field-error"
+          />
+          <div class="field-error" th:errors="*{email}">
+            로그인 시 이메일 오류
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputPassword1" class="form-label">비밀번호</label>
+          <input
+            type="password"
+            class="form-control"
+            id="exampleInputPassword1"
+            th:field="*{password}"
+            th:errorclass="field-error"
+          />
+          <div class="field-error" th:errors="*{password}">
+            로그인 시 패스워드 오류
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">로그인</button>
+      </form>
+    </div>
+  </body>
+</html>

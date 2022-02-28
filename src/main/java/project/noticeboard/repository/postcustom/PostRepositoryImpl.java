@@ -20,13 +20,13 @@ import static project.noticeboard.entity.QMember.member;
 import static project.noticeboard.entity.QPost.post;
 
 @Slf4j
-public class PostRepositoryCustomImpl implements PostRepositoryCustom{
+public class PostRepositoryImpl implements PostRepositoryCustom{
 
     private final EntityManager em;
     private final JPAQueryFactory queryFactory;
 
 
-    public PostRepositoryCustomImpl(EntityManager em) {
+    public PostRepositoryImpl(EntityManager em) {
         this.em = em;
         queryFactory = new JPAQueryFactory(em);
     }

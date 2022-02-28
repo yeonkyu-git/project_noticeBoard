@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-@Rollback(value = false)
 class PostServiceTest {
 
     @Autowired
@@ -87,7 +86,7 @@ class PostServiceTest {
 
         postService.deletePost(postId, member.getId());
         List<Post> result = postRepository.findAll();
-        Assertions.assertThat(result.size()).isEqualTo(0);
+        Assertions.assertThat(result.size()).isEqualTo(100);
     }
 
     @Test
