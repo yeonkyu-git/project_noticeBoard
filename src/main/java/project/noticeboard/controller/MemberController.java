@@ -9,10 +9,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import project.noticeboard.config.SessionConst;
 import project.noticeboard.dto.member.LoginForm;
 import project.noticeboard.dto.member.RegisterForm;
 import project.noticeboard.service.MemberService;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.security.NoSuchAlgorithmException;
 
 @Slf4j
@@ -30,14 +34,19 @@ public class MemberController {
 
     @PostMapping("/")
     public String login(@Validated @ModelAttribute("memberForm") LoginForm form,
-                        BindingResult bindingResult) throws NoSuchAlgorithmException {
+                        BindingResult bindingResult,
+                        HttpServletRequest request) throws NoSuchAlgorithmException {
         if (bindingResult.hasErrors()) {
             log.info("errors = {}", bindingResult);
             return "view/login";
         }
 
-        Long login = memberService.login(form.getEmail(), form.getPassword());
-        log.info("login Id : {}", login);
+        Long memberId = memberService.login(form.getEmail(), form.getPassword());
+        log.info("login Id : {}", memberId);
+
+        // 로그인 시 세션에 멤버 ID 저장
+        HttpSession session = request.getSession();
+        session.setAttribute(SessionConst.LOGIN_MEMBER, memberId);
 
         return "redirect:/board";
     }
@@ -62,6 +71,16 @@ public class MemberController {
 
         Long joinId = memberService.join(form.getEmail(), form.getPassword(), form.getUsername(), form.getAge());
         log.info("joinId : {}", joinId);
+        return "redirect:/";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
         return "redirect:/";
     }
 }

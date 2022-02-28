@@ -1,71 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../css/bootstrap/bootstrap.min.css" />
-    <script
-      src="https://kit.fontawesome.com/4cc3138973.js"
-      crossorigin="anonymous"
-    ></script>
-    <title>Document</title>
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/">Project Board</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div
-          class="collapse navbar-collapse justify-content-between"
-          id="navbarSupportedContent"
-        >
-          <ul class="navbar-nav mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a href="/" class="nav-link active" aria-current="page"> 홈 </a>
-            </li>
-            <li class="nav-item">
-              <a href="/board" class="nav-link active" aria-current="page">
-                게시판
-              </a>
-            </li>
-          </ul>
-
-          <div class="buttons">
-            <a href="/login" class="btn btn-outline-dark">
-              <i class="fa fa-sign-in me-1"></i>
-              Login
-            </a>
-            <a href="/register" class="btn btn-outline-dark ms-2">
-              <i class="fa fa-user-plus me-1"></i>
-              Register
-            </a>
-          </div>
-        </div>
-      </div>
-    </nav>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+  <title>Login Page</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div th:replace="fragments/bodyHeader :: bodyHeader" />
 
     <!-- 게시판 -->
     <div class="container-sm my-5 py-5">
       <div class="row">
         <div class="col-12 mb-5">
           <!-- 게시글 제목  -->
-          <h1 class="display-6 fw-bolder text-center">첫 게시글</h1>
+          <h1 class="display-6 fw-bolder text-center"
+              th:text="${post.title}">첫 게시글</h1>
         </div>
 
         <div class="col-12 mb-5">
           <!-- 게시글 제목  -->
-          <p class="fw-bolder text-center w-50 mx-auto mb-5 pb-5">
+          <p class="fw-bolder text-center w-50 mx-auto mb-5 pb-5" th:text="${post.content}">
             Textarea 의 속성 cols, rows를 사용하여 칸을 더 크게 만들어 보도록
             하겠습니다. cols속성은 가로의 크기를 늘려줍니다. 가로로 50개의
             문자를 넣을 수 있도록 속성값을 지정해줬습니다. rows속성은 세로의
@@ -74,6 +27,27 @@
           </p>
         </div>
       </div>
+
+
+      <div class="buttons text-center" >
+        <a href="/register"
+           th:href="@{'/board/edit/' + ${post.postId}}"
+           th:if="${session['loginMember'] == post.memberId}"
+           class="btn btn-outline-dark ms-2 my-5 py -5">
+          수정
+        </a>
+        <a href="/register"
+           th:href="@{'/board/delete/' + ${post.postId}}"
+           class="btn btn-outline-dark ms-2 my-5 py -5"
+           th:if="${session['loginMember'] == post.memberId}"
+        >
+          삭제
+        </a>
+        <a href="/register" th:href="@{/board}" class="btn btn-outline-dark ms-2 my-5 py -5">
+          목록
+        </a>
+      </div>
+
 
       <div class="col-12 mb-5">
         <!-- 댓글  -->

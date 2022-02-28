@@ -7,14 +7,14 @@ public class PostSearch {
     private String title;
     private String content;
     private String username;
-    private int offset;
-    private int limit;
+    private int page;
+    private int size;
 
-    public PostSearch(String title, String content, String username, int offset, int limit) {
+    public PostSearch(String title, String content, String username, int page, int size) {
         this.title = title;
         this.content = content;
         this.username = username;
-        this.offset = offset;
-        this.limit = limit;
+        this.page = page;
+        this.size = size;
     }
 }

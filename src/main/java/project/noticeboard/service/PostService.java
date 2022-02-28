@@ -3,9 +3,11 @@ package project.noticeboard.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import project.noticeboard.dto.PostDto;
 import project.noticeboard.entity.Member;
 import project.noticeboard.entity.Post;
@@ -37,6 +39,7 @@ public class PostService {
     /**
      * 게시글 수정
      */
+    @Transactional
     public void updatePost(Long postId, Long memberId, String title, String content) {
         Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
         Post post = postRepository.findByIdAndMember(postId, member).orElseThrow(RuntimeException::new);
@@ -61,37 +64,18 @@ public class PostService {
     /**
      * 게시글 조회  ->  Spring Data JPA Paging
      */
-    public List<PostDto> findAllPost(int page, int size) {
+    public Page<PostDto> findAllPost(int page, int size) {
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<Post> pagePosts = postRepository.findAll(pageRequest);
-        List<Post> posts = pagePosts.getContent();
-        return posts.stream()
-                .map(p -> new PostDto(
-                        p.getId(),
-                        p.getTitle(),
-                        p.getContent(),
-                        p.getMember().getUsername(),
-                        p.getCreatedAt(),
-                        p.getModifiedAt()))
-                .collect(Collectors.toList());
+        return postRepository.findAllPosts(pageRequest);
     }
 
     /**
      * 게시글 검색 ( 조건 : 제목, 내용, 작성자 )  -> Querydsl
      */
-    public List<PostDto> findBySearch(PostSearch search) {
-        List<Post> postSearch = postRepository.findPostSearch(search);
-        return postSearch.stream()
-                .map(p -> new PostDto(
-                        p.getId(),
-                        p.getTitle(),
-                        p.getContent(),
-                        p.getMember().getUsername(),
-                        p.getCreatedAt(),
-                        p.getModifiedAt()
-                ))
-                .collect(Collectors.toList());
+    public Page<PostDto> findBySearch(PostSearch search) {
+        PageRequest pageRequest = PageRequest.of(search.getPage(), search.getSize());
+        return postRepository.findPostSearch(search, pageRequest);
     }
 
 }

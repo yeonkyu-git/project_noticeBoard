@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import project.noticeboard.dto.PostDto;
@@ -93,11 +94,13 @@ class PostServiceTest {
     public void 게시글조회_전체() throws Exception {
         em.flush();
         em.clear();
-        List<PostDto> result = postService.findAllPost(0, 20);
-        assertThat(result.size()).isEqualTo(20);
+        Page<PostDto> allPost = postService.findAllPost(0, 20);
+        List<PostDto> content = allPost.getContent();
 
-        for (PostDto postDto : result) {
-            System.out.println("postDto = " + postDto.getTitle());
+        assertThat(content.size()).isEqualTo(20);
+
+        for (PostDto postDto : content) {
+            System.out.println("postDto = " + postDto);
         }
     }
 
@@ -105,8 +108,12 @@ class PostServiceTest {
     public void 게시글조회_조건검색() throws Exception {
         em.flush();
         em.clear();
-        PostSearch postSearch = new PostSearch("", "", "kim", 0, 20);
-        List<PostDto> result = postService.findBySearch(postSearch);
+        PostSearch postSearch = new PostSearch("50", "", "kim", 0, 20);
+        Page<PostDto> result = postService.findBySearch(postSearch);
+        List<PostDto> content = result.getContent();
+
+        assertThat(content.size()).isEqualTo(1);
+
         for (PostDto postDto : result) {
             System.out.println("postDto = " + postDto.getTitle());
         }

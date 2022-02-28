@@ -7,11 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import project.noticeboard.config.SHA256;
 import project.noticeboard.entity.Member;
 import project.noticeboard.repository.MemberRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import java.security.NoSuchAlgorithmException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,10 +33,13 @@ class MemberServiceTest {
     @PersistenceContext
     EntityManager em;
 
+    @Autowired
+    SHA256 sha256 = new SHA256();
+
 
     @BeforeEach
-    private void init() {
-        Member member = new Member("dusrbpoiiij@naver.com", "123456", "kim", 33);
+    private void init() throws NoSuchAlgorithmException {
+        Member member = new Member("dusrbpoiiij@naver.com", sha256.encrypt("123456"), "kim", 33);
         em.persist(member);
     }
 

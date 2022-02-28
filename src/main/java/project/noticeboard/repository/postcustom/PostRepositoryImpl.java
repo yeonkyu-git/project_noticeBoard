@@ -1,12 +1,17 @@
 package project.noticeboard.repository.postcustom;
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 import project.noticeboard.dto.PostDto;
+import project.noticeboard.dto.QPostDto;
 import project.noticeboard.entity.Post;
 import project.noticeboard.entity.QMember;
 import project.noticeboard.entity.QPost;
@@ -32,20 +37,60 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     }
 
     @Override
-    public List<Post> findPostSearch(PostSearch search) {
-        return queryFactory
-                .selectFrom(post)
-                .leftJoin(post.member, member).fetchJoin()
+    public Page<PostDto> findAllPosts(Pageable pageable) {
+        QueryResults<PostDto> result = queryFactory
+                .select(new QPostDto(
+                        post.id,
+                        post.title,
+                        post.content,
+                        member.username,
+                        post.createdAt,
+                        post.modifiedAt
+                ))
+                .from(post)
+                .leftJoin(post.member, member)
+                .orderBy(post.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        List<PostDto> content = result.getResults();
+        long total = result.getTotal();
+        return new PageImpl<>(content, pageable, total);
+    }
+
+
+
+    @Override
+    public Page<PostDto> findPostSearch(PostSearch search, Pageable pageable) {
+        QueryResults<PostDto> result = queryFactory
+                .select(new QPostDto(
+                        post.id,
+                        post.title,
+                        post.content,
+                        member.username,
+                        post.createdAt,
+                        post.modifiedAt
+                ))
+                .from(post)
+                .leftJoin(post.member, member)
                 .where(
                         titleContain(search.getTitle()),
                         contentContain(search.getContent()),
                         usernameContain(search.getUsername())
                 )
                 .orderBy(post.createdAt.desc())
-                .offset(search.getOffset())
-                .limit(search.getLimit())
-                .fetch();
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+
+        List<PostDto> content = result.getResults();
+        long total = result.getTotal();
+        return new PageImpl<>(content, pageable, total);
     }
+
+
 
     private BooleanExpression titleContain(String title) {
         return hasText(title) ? post.title.contains(title) : null;
