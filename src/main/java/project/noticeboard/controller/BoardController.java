@@ -8,18 +8,22 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import project.noticeboard.config.SessionConst;
 import project.noticeboard.dto.PostDto;
-import project.noticeboard.dto.post.PostDetailForm;
-import project.noticeboard.dto.post.PostEditForm;
-import project.noticeboard.dto.post.PostForm;
+import project.noticeboard.dto.post.*;
 import project.noticeboard.entity.Post;
 import project.noticeboard.repository.PostRepository;
+import project.noticeboard.repository.postcustom.CheckBoxSelect;
+import project.noticeboard.repository.postcustom.PostSearch;
 import project.noticeboard.service.PostService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -31,24 +35,45 @@ public class BoardController {
     private final PostService postService;
     private final PostRepository postRepository;
 
-    @GetMapping
+//    @GetMapping
     public String boardView(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
                             @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                             Model model) {
 
         Page<PostDto> allPost = postService.findAllPost(page, size);
 
+        model.addAttribute("checkBoxConditions", checkBoxConditions());
         model.addAttribute("posts", allPost.getContent());
         model.addAttribute("totalPages", allPost.getTotalPages());
         model.addAttribute("currentPage", page);
+        model.addAttribute("searchForm", new SearchForm());
 
-        log.info("totalPages : {}", allPost.getTotalPages());
-        log.info("currentPage : {}", page);
+        return "view/board";
+    }
 
+    // 검색 조건을 쿼리파마리터로 받아서 전체 조회, 조건 조회 모두 통합함
+    @GetMapping
+    public String boardViewV2(
+                            @RequestParam(value = "condition", required = false, defaultValue = "ALL") CheckBoxSelect checkBoxSelect,
+                            @RequestParam(value = "search", required = false, defaultValue = "") String search,
+                            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+                            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+                            Model model) {
 
-        for (PostDto postDto : allPost.getContent()) {
-            log.info("postDto Created : {}", postDto.getCreatedAt());
-        }
+        SearchForm form = new SearchForm();
+        form.setCondition(CheckBoxSelect.valueOf(checkBoxSelect.name()));
+        form.setSearch(search);
+
+        PostSearch postSearch = new PostSearch(form.getCondition(), form.getSearch(), page, size);
+        Page<PostDto> allPost = postService.findBySearch(postSearch);
+
+        model.addAttribute("checkBoxConditions", checkBoxConditions());
+        model.addAttribute("posts", allPost.getContent());
+        model.addAttribute("totalPages", allPost.getTotalPages());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("searchForm", new SearchForm());
+        model.addAttribute("condition", checkBoxSelect);
+        model.addAttribute("search", search);
 
         return "view/board";
     }
@@ -130,5 +155,18 @@ public class BoardController {
 
         postService.deletePost(postId, memberId);
         return "redirect:/board";
+    }
+
+
+
+
+    private List<CheckBoxCondition> checkBoxConditions() {
+        List<CheckBoxCondition> conditions = new ArrayList<>();
+        conditions.add(new CheckBoxCondition(CheckBoxSelect.TITLE, "제목"));
+        conditions.add(new CheckBoxCondition(CheckBoxSelect.CONTENT, "내용"));
+        conditions.add(new CheckBoxCondition(CheckBoxSelect.TITLEANDCONTENT, "제목+내용"));
+        conditions.add(new CheckBoxCondition(CheckBoxSelect.WRITER, "작성자"));
+
+        return conditions;
     }
 }

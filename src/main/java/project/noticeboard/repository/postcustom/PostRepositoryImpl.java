@@ -75,9 +75,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .from(post)
                 .leftJoin(post.member, member)
                 .where(
-                        titleContain(search.getTitle()),
-                        contentContain(search.getContent()),
-                        usernameContain(search.getUsername())
+                        titleAndContentContain(search.getConditionString(), search.getCheckBoxSelect())
                 )
                 .orderBy(post.createdAt.desc())
                 .offset(pageable.getOffset())
@@ -91,6 +89,20 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     }
 
 
+    // 제목만 검색, 내용만 검색, 제목+내용 검색
+    private BooleanExpression titleAndContentContain(String conditionString, CheckBoxSelect checkBoxSelect) {
+        if (checkBoxSelect.equals(CheckBoxSelect.TITLE)) {
+            return titleContain(conditionString);
+        } else if (checkBoxSelect.equals(CheckBoxSelect.CONTENT)) {
+            return contentContain(conditionString);
+        } else if(checkBoxSelect.equals(CheckBoxSelect.TITLEANDCONTENT)) {
+            return allContain(conditionString);
+        } else if (checkBoxSelect.equals(CheckBoxSelect.WRITER)) {
+            return usernameContain(conditionString);
+        }
+
+        return null;
+    }
 
     private BooleanExpression titleContain(String title) {
         return hasText(title) ? post.title.contains(title) : null;
@@ -98,6 +110,12 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
     private BooleanExpression contentContain(String content) {
         return hasText(content) ? post.content.contains(content) : null;
+    }
+
+    private BooleanExpression allContain(String str) {
+        BooleanExpression titleExpression = titleContain(str);
+        BooleanExpression contentExpression = contentContain(str);
+        return titleExpression.or(contentExpression);
     }
 
     private BooleanExpression usernameContain(String username) {

@@ -4,16 +4,14 @@ import lombok.Data;
 
 @Data
 public class PostSearch {
-    private String title;
-    private String content;
-    private String username;
+    private CheckBoxSelect checkBoxSelect;
+    private String conditionString;
     private int page;
     private int size;
 
-    public PostSearch(String title, String content, String username, int page, int size) {
-        this.title = title;
-        this.content = content;
-        this.username = username;
+    public PostSearch(CheckBoxSelect checkBoxSelect, String conditionString, int page, int size) {
+        this.checkBoxSelect = checkBoxSelect;
+        this.conditionString = conditionString;
         this.page = page;
         this.size = size;
     }

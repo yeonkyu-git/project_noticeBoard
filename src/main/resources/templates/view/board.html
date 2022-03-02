@@ -14,6 +14,35 @@
           <h1 class="display-6 fw-bolder text-center">게시판</h1>
         </div>
       </div>
+      <div class="container-sm my-5 py-5">
+        <form class="d-flex justify-content-center" method="get" th:action th:object="${searchForm}">
+          <select
+                  class="form-select w-25 m-2 p-2"
+                  aria-label="Default select example"
+                  th:field="*{condition}"
+          >
+            <option selected value="">선택해주세요.</option>
+            <option th:each="checkBoxCondition : ${checkBoxConditions}"
+                    th:value="${checkBoxCondition.condition}"
+                    th:text="${checkBoxCondition.displayName}">One
+            </option>
+          </select>
+
+          <input
+                  type="text"
+                  class="form-control w-50 m-2 p-2"
+                  id="exampleInputEmail1"
+                  aria-describedby="emailHelp"
+                  th:field="*{search}"
+                  th:errorclass="field-error"
+          />
+          <div class="field-error" th:errors="*{search}">
+            로그인 시 이메일 오류
+          </div>
+          <button type="submit" class="btn btn-primary">검색</button>
+        </form>
+      </div>
+
       <div class="row justify-content-center">
         <!-- 상위 헤더 -->
         <div class="d-flex justify-content-center border bg-light">
@@ -60,17 +89,17 @@
         <div class="container-sm my-2 py-2 w-25">
           <div class="row justify-content-between text-center">
             <div class="col" th:if="${currentPage} != 0">
-              <a th:href="@{/board(page=${currentPage} - 1, size=10)}" class="text-decoration-none text-black" >prev</a>
+              <a th:href="@{/board(condition=${condition}, search=${search}, page=${currentPage} - 1, size=10)}" class="text-decoration-none text-black" >prev</a>
             </div>
             <th:block th:each="num : ${#numbers.sequence(1, totalPages)}">
               <div class="col">
-                <a th:href="@{/board(page=${num} - 1, size=10)}" class="text-decoration-none text-black" th:text="${num}"
+                <a th:href="@{/board(condition=${condition}, search=${search}, page=${num} - 1, size=10)}" class="text-decoration-none text-black" th:text="${num}"
                    th:classappend="${num == currentPage + 1 ? 'fw-bold' : ''}">
                 >1</a>
               </div>
             </th:block>
             <div class="col" th:if="${currentPage} != ${totalPages} - 1">
-              <a th:href="@{/board(page=${currentPage} + 1, size=10)}" class="text-decoration-none text-black" >next</a>
+              <a th:href="@{/board(condition=${condition}, search=${search}, page=${currentPage} + 1, size=10)}" class="text-decoration-none text-black" >next</a>
             </div>
           </div>
         </div>

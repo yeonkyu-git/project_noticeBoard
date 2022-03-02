@@ -44,7 +44,13 @@ public class TestDataInit {
 
             log.info("member Collection : {}", member.getPosts());
             for (int i = 0; i < 50; i++) {
-                postService.createPost("title " + i, "content " + i, member.getId());
+
+                if (i % 2 == 0) {
+                    postService.createPost("title " + i, "content " + i, member.getId());
+                } else {
+                    postService.createPost("제목 " + i, "내용 " + i, member.getId());
+                }
+
             }
         }
 

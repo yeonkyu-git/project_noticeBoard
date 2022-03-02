@@ -13,6 +13,7 @@ import project.noticeboard.entity.Member;
 import project.noticeboard.entity.Post;
 import project.noticeboard.repository.MemberRepository;
 import project.noticeboard.repository.PostRepository;
+import project.noticeboard.repository.postcustom.CheckBoxSelect;
 import project.noticeboard.repository.postcustom.PostSearch;
 
 import javax.persistence.EntityManager;
@@ -41,12 +42,15 @@ class PostServiceTest {
     @BeforeEach
     public void init() {
         Long memberId = memberService.join("dusrbpoiiij@naver.com", "123456", "kim", 33);
+        Long memberId2 = memberService.join("dusrbpoii@naver.com", "123456", "Lee", 33);
         postService.createPost("죽", "이건 내용 영역입니다.", memberId);
+        postService.createPost("죽", "이건 내용 영역입니다.11", memberId);
+        postService.createPost("죽11", "이건 내용 영역입니다.", memberId2);
 
-        for (int i=0; i<100; i++) {
-            Long memberId2 = memberService.join("dusrbpoiiij@naver.com" + i, "123456", "kim", 33);
-            postService.createPost("안녕하세요" + i, "이건 내용 입니다." + i, memberId2);
-        }
+//        for (int i=0; i<100; i++) {
+//            Long memberId2 = memberService.join("dusrbpoiiij@naver.com" + i, "123456", "kim", 33);
+//            postService.createPost("안녕하세요" + i, "이건 내용 입니다." + i, memberId2);
+//        }
     }
 
     @Test
@@ -108,7 +112,7 @@ class PostServiceTest {
     public void 게시글조회_조건검색() throws Exception {
         em.flush();
         em.clear();
-        PostSearch postSearch = new PostSearch("50", "", "kim", 0, 20);
+        PostSearch postSearch = new PostSearch(CheckBoxSelect.WRITER, "Lee",  0, 20);
         Page<PostDto> result = postService.findBySearch(postSearch);
         List<PostDto> content = result.getContent();
 
