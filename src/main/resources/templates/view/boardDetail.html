@@ -44,7 +44,7 @@
           삭제
         </a>
         <a href="/register" th:href="@{/board}" class="btn btn-outline-dark ms-2 my-5 py -5">
-          목록
+          목록록
         </a>
       </div>
 
@@ -58,15 +58,30 @@
         <form
           action=""
           class="d-flex justify-content-center mb-5 pb-5 text-center w-50"
+          th:action="@{/reply/create}"
+          th:object="${replyForm}"
+          method="post"
         >
           <input
             type="text"
             class="form-control"
             id="exampleInputReply"
             placeholder="댓글을 등록해보아요.."
+            th:field="*{content}"
+            th:errorclass="field-error"
+          />
+
+          <input
+                  type="text"
+                  class="form-control"
+                  id="exampleInputReplyPostId"
+                  th:value="${post.postId}"
+                  hidden
+                  th:name="postId"
           />
           <button type="submit" class="btn btn-primary w-25">등록</button>
         </form>
+
 
         <!-- 댓글 내용 -->
         <div class="d-flex justify-content-center border bg-light">
@@ -79,30 +94,37 @@
           <div class="col-2">
             <div class="p-3">등록일</div>
           </div>
+          <div class="col-2">
+            <div class="p-3">삭제</div>
+          </div>
         </div>
 
-        <div class="d-flex justify-content-center">
-          <div class="col-6">
-            <div class="p-3">재밌네요!!</div>
+
+
+        <th:block th:each="reply, index : ${replies}">
+          <div class="d-flex justify-content-center">
+            <div class="col-6">
+              <div class="p-3" th:text="${reply.content}">재밌네요!!</div>
+            </div>
+            <div class="col-2">
+              <div class="p-3" th:text="${reply.username}">김연규</div>
+            </div>
+            <div class="col-2">
+              <div class="p-3" th:text="${#temporals.format(reply.createdAt, 'yyyy-MM-dd')}">2022-02-27</div>
+            </div>
+            <div class="col-2">
+              <a href="/register"
+                 th:href="@{'/reply/delete/' + ${reply.replyId}} + '/' + ${post.postId}"
+                 class="btn btn-outline-dark my-2"
+                 th:if="${session['loginMember'] == reply.memberId || session['loginMember'] == post.memberId }"
+              >
+                삭제
+              </a>
+            </div>
           </div>
-          <div class="col-2">
-            <div class="p-3">김연규</div>
-          </div>
-          <div class="col-2">
-            <div class="p-3">2022-02-27</div>
-          </div>
-        </div>
-        <div class="d-flex justify-content-center">
-          <div class="col-6">
-            <div class="p-3">그러게요..</div>
-          </div>
-          <div class="col-2">
-            <div class="p-3">김연규</div>
-          </div>
-          <div class="col-2">
-            <div class="p-3">2022-02-27</div>
-          </div>
-        </div>
+        </th:block>
+
+
       </div>
     </div>
   </body>

@@ -61,19 +61,9 @@ public class ReplyService {
     /**
      * 댓글 조회
      */
-    public List<ReplyDto> findByPostId(Long postId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+    public List<ReplyDto> findByPostId(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(RuntimeException::new);
-        Page<Reply> pageReply = replyRepository.findReplyWithPostAndMember(post, pageRequest);
-        List<Reply> replies = pageReply.getContent();
-        return replies.stream()
-                .map(r -> new ReplyDto(
-                        r.getId(),
-                        r.getContent(),
-                        r.getMember().getUsername(),
-                        r.getCreatedAt()
-                ))
-                .collect(Collectors.toList());
+        return replyRepository.findAllReplyByPost(post);
     }
 
 

@@ -12,12 +12,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import project.noticeboard.config.SessionConst;
 import project.noticeboard.dto.PostDto;
+import project.noticeboard.dto.ReplyDto;
 import project.noticeboard.dto.post.*;
+import project.noticeboard.dto.reply.ReplyForm;
 import project.noticeboard.entity.Post;
 import project.noticeboard.repository.PostRepository;
 import project.noticeboard.repository.postcustom.CheckBoxSelect;
 import project.noticeboard.repository.postcustom.PostSearch;
 import project.noticeboard.service.PostService;
+import project.noticeboard.service.ReplyService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -34,6 +37,7 @@ public class BoardController {
 
     private final PostService postService;
     private final PostRepository postRepository;
+    private final ReplyService replyService;
 
 //    @GetMapping
     public String boardView(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
@@ -61,6 +65,7 @@ public class BoardController {
                             Model model) {
 
         SearchForm form = new SearchForm();
+        log.info("checkBoxSelect = {} , search = {}", checkBoxSelect, search);
         form.setCondition(CheckBoxSelect.valueOf(checkBoxSelect.name()));
         form.setSearch(search);
 
@@ -71,7 +76,7 @@ public class BoardController {
         model.addAttribute("posts", allPost.getContent());
         model.addAttribute("totalPages", allPost.getTotalPages());
         model.addAttribute("currentPage", page);
-        model.addAttribute("searchForm", new SearchForm());
+        model.addAttribute("searchForm", form);
         model.addAttribute("condition", checkBoxSelect);
         model.addAttribute("search", search);
 
@@ -102,10 +107,10 @@ public class BoardController {
     }
 
     @GetMapping("/{postId}")
-    public String boardDetail(@PathVariable("postId") Long postId,
-                              Model model) {
+    public String boardDetail(@PathVariable("postId") Long postId, Model model) {
 
         log.info("board Detail");
+        // Post Detail
         Optional<Post> postOp = postRepository.findById(postId);
         Post originPost = postOp.orElse(null);
         PostDetailForm post = new PostDetailForm();
@@ -114,7 +119,13 @@ public class BoardController {
         post.setPostId(originPost.getId());
         post.setMemberId(originPost.getMember().getId());
 
+        //Reply Detail
+        List<ReplyDto> replies = replyService.findByPostId(originPost.getId());
+
+
         model.addAttribute("post", post);
+        model.addAttribute("replies", replies);
+        model.addAttribute("replyForm", new ReplyForm());
 
         return "view/boardDetail";
     }

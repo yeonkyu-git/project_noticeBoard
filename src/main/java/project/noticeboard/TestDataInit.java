@@ -8,6 +8,7 @@ import project.noticeboard.config.SHA256;
 import project.noticeboard.entity.Member;
 import project.noticeboard.repository.MemberRepository;
 import project.noticeboard.service.PostService;
+import project.noticeboard.service.ReplyService;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -33,6 +34,7 @@ public class TestDataInit {
     static class InitService {
         private final MemberRepository memberRepository;
         private final PostService postService;
+        private final ReplyService replyService;
         private final SHA256 sha256;
         private final EntityManager em;
 
@@ -51,6 +53,12 @@ public class TestDataInit {
                     postService.createPost("제목 " + i, "내용 " + i, member.getId());
                 }
 
+            }
+
+            Long postId = postService.createPost("제목ggg ", "내용 gggddd", member.getId());
+
+            for (int i = 0; i < 10; i++) {
+                replyService.createReply("댓글입니다. " + i, member.getId(), postId);
             }
         }
 

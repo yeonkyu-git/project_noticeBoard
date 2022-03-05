@@ -8,10 +8,11 @@ import org.springframework.data.repository.query.Param;
 import project.noticeboard.entity.Member;
 import project.noticeboard.entity.Post;
 import project.noticeboard.entity.Reply;
+import project.noticeboard.repository.replycustom.ReplyRepositoryCustom;
 
 import java.util.List;
 
-public interface ReplyRepository extends JpaRepository<Reply, Long> {
+public interface ReplyRepository extends JpaRepository<Reply, Long>, ReplyRepositoryCustom {
 
     // 전체 게시글을 조회하고 Paging 요건
     // fetch join으로 N+1 문제 해결
@@ -22,9 +23,9 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
                     + "where r.post = :post",
             countQuery = "select count(r) from Reply r"
     )
-    Page<Reply> findReplyWithPostAndMember(@Param("post") Post post, Pageable pageable);
+    List<Reply> findReplyWithPostAndMember(@Param("post") Post post);
 
 
 
-    Page<Reply> findByPost(Post post, Pageable pageable);
+    List<Reply> findByPost(Post post);
 }
